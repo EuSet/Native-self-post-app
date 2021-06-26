@@ -1,4 +1,5 @@
 import {createStackNavigator} from "@react-navigation/stack";
+import {DrawerNavigationProp} from "@react-navigation/drawer"
 import {MainScreen} from "../screens/mainScreen";
 import {PostScreen} from "../screens/postScreen";
 import * as React from "react";
@@ -7,6 +8,7 @@ import {AppHeaderIcon} from "../components/appHeaderIcon";
 import {RouteProp} from "@react-navigation/native";
 import {Platform} from "react-native";
 import {THEME} from "../common/theme";
+import {RootDrawerParamList} from "./rootNavigation";
 
 export type RootStackParamList = {
     Post: {
@@ -17,24 +19,26 @@ export type RootStackParamList = {
     Main: undefined,
 }
 export const Stack = createStackNavigator<RootStackParamList>()
-const mainScreenOptions = {
-    title: 'Main',
-    headerRight: () => <HeaderButtons HeaderButtonComponent={AppHeaderIcon}>
-        <Item title={'Take Photo'}
-              iconName={'ios-camera'}
-              onPress={() => {
-                  console.log('take a photo')
-              }}
-        />
-    </HeaderButtons>,
-    headerLeft: () => <HeaderButtons HeaderButtonComponent={AppHeaderIcon}>
-        <Item title={'drawer'}
-              iconName={'ios-menu'}
-              onPress={() => {
-                  console.log('menu')
-              }}
-        />
-    </HeaderButtons>
+const mainScreenOptions = (navigation:DrawerNavigationProp<RootDrawerParamList, 'Posts'> ) => {
+    return {
+        title: 'Main',
+        headerRight: () => <HeaderButtons HeaderButtonComponent={AppHeaderIcon}>
+            <Item title={'Take Photo'}
+                  iconName={'ios-camera'}
+                  onPress={() => {
+                      navigation.navigate('Create post')
+                  }}
+            />
+        </HeaderButtons>,
+        headerLeft: () => <HeaderButtons HeaderButtonComponent={AppHeaderIcon}>
+            <Item title={'drawer'}
+                  iconName={'ios-menu'}
+                  onPress={() => {
+                     navigation.toggleDrawer()
+                  }}
+            />
+        </HeaderButtons>
+    }
 
 }
 const postScreenOptions = (route: RouteProp<RootStackParamList, 'Post'>) => {
@@ -55,10 +59,10 @@ export const defaultScreenOptions = {
         backgroundColor: Platform.OS === "ios" ? '#fff' : THEME.MAIN_COLOR
     }, headerTintColor: Platform.OS === "ios" ? THEME.MAIN_COLOR : '#fff'
 }
-export const RootNavigator = () => {
+export const PostsNavigator = () => {
     return (
-        <Stack.Navigator initialRouteName={'Main'} screenOptions={defaultScreenOptions}>
-            <Stack.Screen name={'Main'} component={MainScreen} options={mainScreenOptions}/>
+        <Stack.Navigator screenOptions={defaultScreenOptions}>
+            <Stack.Screen name={'Main'} component={MainScreen} options={({navigation}) => mainScreenOptions(navigation)}/>
             <Stack.Screen name={'Post'} component={PostScreen} options={({route}) => postScreenOptions(route)}/>
         </Stack.Navigator>
     );

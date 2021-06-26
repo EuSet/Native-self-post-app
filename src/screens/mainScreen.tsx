@@ -2,8 +2,8 @@ import {StackNavigationProp} from '@react-navigation/stack';
 import React from "react";
 import {DATA, PostType} from "../data";
 import {Post} from "../components/post";
-import {RootStackParamList} from "../../index";
 import {PostList} from "../components/postList";
+import {RootStackParamList} from "../navigation/postsNavigator";
 
 
 type PropsType = {

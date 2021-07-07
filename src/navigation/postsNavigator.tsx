@@ -15,6 +15,7 @@ export type RootStackParamList = {
         postId: string
         date: string
         booked: boolean
+        changeBookedToggle: (id:string) => void
     },
     Main: undefined,
 }
@@ -48,7 +49,7 @@ const postScreenOptions = (route: RouteProp<RootStackParamList, 'Post'>) => {
             <Item title={'booked'}
                   iconName={route.params.booked ? 'ios-star' : 'ios-star-outline'}
                   onPress={() => {
-                      console.log('take a photo')
+                      route.params.changeBookedToggle(route.params.postId)
                   }}
             />
         </HeaderButtons>

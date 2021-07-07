@@ -5,7 +5,6 @@ import {PostScreen} from "../screens/postScreen";
 import * as React from "react";
 import {HeaderButtons, Item} from "react-navigation-header-buttons";
 import {AppHeaderIcon} from "../components/appHeaderIcon";
-import {RouteProp} from "@react-navigation/native";
 import {Platform} from "react-native";
 import {THEME} from "../common/theme";
 import {RootDrawerParamList} from "./rootNavigation";
@@ -15,7 +14,6 @@ export type RootStackParamList = {
         postId: string
         date: string
         booked: boolean
-        changeBookedToggle: (id:string) => void
     },
     Main: undefined,
 }
@@ -42,19 +40,19 @@ const mainScreenOptions = (navigation:DrawerNavigationProp<RootDrawerParamList, 
     }
 
 }
-const postScreenOptions = (route: RouteProp<RootStackParamList, 'Post'>) => {
-    return {
-        title: 'Post',
-        headerRight: () => <HeaderButtons HeaderButtonComponent={AppHeaderIcon}>
-            <Item title={'booked'}
-                  iconName={route.params.booked ? 'ios-star' : 'ios-star-outline'}
-                  onPress={() => {
-                      route.params.changeBookedToggle(route.params.postId)
-                  }}
-            />
-        </HeaderButtons>
-    }
-}
+// const postScreenOptions = (route: RouteProp<RootStackParamList, 'Post'>) => {
+//     return {
+//         title: 'Post',
+//         // headerRight: () => <HeaderButtons HeaderButtonComponent={AppHeaderIcon}>
+//         //     <Item title={'booked'}
+//         //           iconName={route.params.booked ? 'ios-star' : 'ios-star-outline'}
+//         //           onPress={() => {
+//         //               route.params.changeBookedToggle(route.params.postId)
+//         //           }}
+//         //     />
+//         // </HeaderButtons>
+//     }
+// }
 export const defaultScreenOptions = {
     headerShown: true, headerStyle: {
         backgroundColor: Platform.OS === "ios" ? '#fff' : THEME.MAIN_COLOR
@@ -64,7 +62,7 @@ export const PostsNavigator = () => {
     return (
         <Stack.Navigator screenOptions={defaultScreenOptions}>
             <Stack.Screen name={'Main'} component={MainScreen} options={({navigation}) => mainScreenOptions(navigation)}/>
-            <Stack.Screen name={'Post'} component={PostScreen} options={({route}) => postScreenOptions(route)}/>
+            <Stack.Screen name={'Post'} component={PostScreen}/>
         </Stack.Navigator>
     );
 }

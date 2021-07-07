@@ -1,38 +1,44 @@
-import {StyleSheet, Text, View, Image, Button, ScrollView, Alert} from "react-native";
+import {Alert, Button, Image, ScrollView, StyleSheet, Text, View} from "react-native";
 import React, {useCallback, useEffect, useLayoutEffect} from "react";
 import {StackNavigationProp} from "@react-navigation/stack";
 import {RouteProp, useRoute} from '@react-navigation/native';
-import {DATA} from "../data";
+import {PostType} from "../data";
 import {THEME} from "../common/theme";
 import {RootStackParamList} from "../navigation/postsNavigator";
 import {useDispatch, useSelector} from "react-redux";
-import {changeBooked} from "../store/post-reducer";
+import {changeBooked, removePost} from "../store/post-reducer";
 import {AppRootState} from "../store/store";
+import {HeaderButtons, Item} from "react-navigation-header-buttons";
+import {AppHeaderIcon} from "../components/appHeaderIcon";
 
 
 type PropsType = {
-    navigation:StackNavigationProp<RootStackParamList, 'Post'>
+    navigation: StackNavigationProp<RootStackParamList, 'Post'>
     // route: RouteProp<{ params: { postId: string, date:string, booked:boolean } }, 'params'>
 }
-export const PostScreen = (props:PropsType) => {
+export const PostScreen = (props: PropsType) => {
     const dispatch = useDispatch()
     const route = useRoute<RouteProp<RootStackParamList, 'Post'>>()
     const booked = useSelector<AppRootState, boolean>(state =>
         state.post.bookedPosts.some(p => p.id === route.params.postId))
-    const changeBookedToggle = useCallback((id:string) => {
+    const post = useSelector<AppRootState, PostType>(state => state.post.allPosts.find(p => p.id === route.params.postId)!)
+    const changeBookedToggle = useCallback((id: string) => {
         dispatch(changeBooked(id))
-    },[])
+    }, [])
     useEffect(() => {
-        props.navigation.navigate('Post', {...route.params, booked})
+        props.navigation.setParams({booked})
     }, [booked])
-    useEffect(() => {
-        props.navigation.navigate('Post', {...route.params, changeBookedToggle})
-    }, [changeBookedToggle])
     useLayoutEffect(() => {
         props.navigation.setOptions({
             title: new Date(route.params.date).toLocaleDateString(),
+            headerRight: () => <HeaderButtons HeaderButtonComponent={AppHeaderIcon}>
+                <Item title={'booked'}
+                      iconName={route.params.booked ? 'ios-star' : 'ios-star-outline'}
+                      onPress={() => {changeBookedToggle(route.params.postId)}}
+                />
+            </HeaderButtons>
         })
-    })
+    }, [props.navigation, route.params.booked])
 
     const removeHandler = () => {
         Alert.alert(
@@ -47,6 +53,8 @@ export const PostScreen = (props:PropsType) => {
                     text: "Remove",
                     style: "destructive",
                     onPress: () => {
+                        props.navigation.navigate('Main')
+                        dispatch(removePost(route.params.postId))
 
                     }
                 }
@@ -54,25 +62,28 @@ export const PostScreen = (props:PropsType) => {
             {cancelable: false,}
         )
     }
-    const post = DATA.find(p => p.id === route.params.postId.toString())!
+    if(!post){
+        return null
+    }
+
     return <ScrollView>
         <Image source={{uri: post.img}} style={styles.image}/>
         <View style={styles.textWrap}>
             <Text style={styles.title}>{post.text}</Text>
         </View>
-    <Button title={'Delete'} color={THEME.DANGER_COLOR} onPress={removeHandler}/>
+        <Button title={'Delete'} color={THEME.DANGER_COLOR} onPress={removeHandler}/>
     </ScrollView>
 }
 
 const styles = StyleSheet.create({
-    image:{
-        width:'100%',
-        height:200
+    image: {
+        width: '100%',
+        height: 200
     },
-    textWrap:{
-        padding:10
+    textWrap: {
+        padding: 10
     },
-    title:{
-        fontFamily:'open-regular'
+    title: {
+        fontFamily: 'open-regular'
     }
 })

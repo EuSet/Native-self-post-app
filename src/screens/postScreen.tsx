@@ -2,11 +2,10 @@ import {Alert, Button, Image, ScrollView, StyleSheet, Text, View} from "react-na
 import React, {useCallback, useEffect, useLayoutEffect} from "react";
 import {StackNavigationProp} from "@react-navigation/stack";
 import {RouteProp, useRoute} from '@react-navigation/native';
-import {PostType} from "../data";
 import {THEME} from "../common/theme";
 import {RootStackParamList} from "../navigation/postsNavigator";
 import {useDispatch, useSelector} from "react-redux";
-import {changeBooked, removePost} from "../store/post-reducer";
+import {changeBookedThunk, PostType, removePostThunk} from "../store/post-reducer";
 import {AppRootState} from "../store/store";
 import {HeaderButtons, Item} from "react-navigation-header-buttons";
 import {AppHeaderIcon} from "../components/appHeaderIcon";
@@ -22,8 +21,8 @@ export const PostScreen = (props: PropsType) => {
     const booked = useSelector<AppRootState, boolean>(state =>
         state.post.bookedPosts.some(p => p.id === route.params.postId))
     const post = useSelector<AppRootState, PostType>(state => state.post.allPosts.find(p => p.id === route.params.postId)!)
-    const changeBookedToggle = useCallback((id: string) => {
-        dispatch(changeBooked(id))
+    const changeBookedToggle = useCallback((post: {booked:boolean, id:number}) => {
+        dispatch(changeBookedThunk(post))
     }, [])
     useEffect(() => {
         props.navigation.setParams({booked})
@@ -34,7 +33,7 @@ export const PostScreen = (props: PropsType) => {
             headerRight: () => <HeaderButtons HeaderButtonComponent={AppHeaderIcon}>
                 <Item title={'booked'}
                       iconName={route.params.booked ? 'ios-star' : 'ios-star-outline'}
-                      onPress={() => {changeBookedToggle(route.params.postId)}}
+                      onPress={() => {changeBookedToggle({id:route.params.postId, booked:route.params.booked})}}
                 />
             </HeaderButtons>
         })
@@ -54,7 +53,7 @@ export const PostScreen = (props: PropsType) => {
                     style: "destructive",
                     onPress: () => {
                         props.navigation.navigate('Main')
-                        dispatch(removePost(route.params.postId))
+                        dispatch(removePostThunk(route.params.postId))
 
                     }
                 }

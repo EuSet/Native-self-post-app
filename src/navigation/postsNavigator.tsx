@@ -11,7 +11,7 @@ import {RootDrawerParamList} from "./rootNavigation";
 
 export type RootStackParamList = {
     Post: {
-        postId: string
+        postId: number
         date: string
         booked: boolean
     },

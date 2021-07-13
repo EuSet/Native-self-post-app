@@ -1,11 +1,11 @@
 import {StackNavigationProp} from '@react-navigation/stack';
 import React from "react";
-import {PostType} from "../data";
 import {Post} from "../components/post";
 import {PostList} from "../components/postList";
 import {RootStackParamList} from "../navigation/postsNavigator";
 import {useSelector} from "react-redux";
 import {AppRootState} from "../store/store";
+import {PostType} from "../store/post-reducer";
 
 
 type PropsType = {

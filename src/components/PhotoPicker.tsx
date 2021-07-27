@@ -25,7 +25,7 @@ export const PhotoPicker:React.FC<PropsType> = ({onPick}) => {
     const [image, setImage] = useState<string | null>(null)
 
     const takePhoto = async () => {
-        const hasPermission = askForPermissions()
+        const hasPermission = await askForPermissions()
         if (!hasPermission) {
             return
         }

@@ -1,6 +1,6 @@
-import {View, StyleSheet, ImageBackground, Text, TouchableOpacity} from "react-native";
+import {ImageBackground, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import React from "react";
-import {PostType} from "../data";
+import {PostType} from "../store/post-reducer";
 
 type PropsType = {
     post: PostType
@@ -21,12 +21,16 @@ export const Post: React.FC<PropsType> = ({post, onOpen}) => {
 
 const styles = StyleSheet.create({
     post: {
+        width:150,
+        height: 150,
+        marginHorizontal:15,
         marginBottom:15,
+        borderRadius:5,
         overflow:"hidden"
     },
     image: {
         width:'100%',
-        height:200
+        height:200,
     },
     textWrap:{
         backgroundColor:'rgba(0, 0, 0, 0.5)',
